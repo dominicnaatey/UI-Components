@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { ROBOT_SLIDES } from './constants';
 
 const NeoCarousel: React.FC = () => {
@@ -14,9 +15,11 @@ const NeoCarousel: React.FC = () => {
 
   useEffect(() => {
     // Set initial width
-    setWindowWidth(window.innerWidth);
-    
     const handleResize = () => setWindowWidth(window.innerWidth);
+    
+    // Initial call
+    handleResize();
+    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -132,7 +135,7 @@ const NeoCarousel: React.FC = () => {
             <div className={`relative w-full h-full overflow-hidden rounded-[40px] md:rounded-[80px] shadow-2xl bg-white group transition-shadow duration-300 ${activeIndex === index ? 'shadow-black/10' : 'shadow-none'}`}>
               {/* Image Label - Dark pill style matching the mobile reference */}
               {activeIndex === index && (
-                <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 z-[20] pointer-events-none">
+                <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 z-20 pointer-events-none">
                   <div className="text-white whitespace-nowrap text-[13px] font-medium rounded-full bg-black/80 backdrop-blur-md px-6 py-3 animate-in fade-in zoom-in-95 duration-500">
                     {slide.title}
                   </div>
@@ -140,11 +143,16 @@ const NeoCarousel: React.FC = () => {
               )}
 
               {/* Slide Image */}
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className={`w-full h-full object-cover transition-all duration-1000 object-top pointer-events-none ${activeIndex === index ? 'scale-100 brightness-100' : 'scale-110 brightness-90'}`}
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  className={`object-cover transition-all duration-1000 object-top pointer-events-none ${activeIndex === index ? 'scale-100 brightness-100' : 'scale-110 brightness-90'}`}
+                  priority={Math.abs(activeIndex - index) <= 1}
+                  sizes="(max-width: 768px) 100vw, 720px"
+                />
+              </div>
               
               {/* Desktop Detail Overlay */}
               {!isMobile && activeIndex === index && (
@@ -158,7 +166,7 @@ const NeoCarousel: React.FC = () => {
       </div>
 
       {/* Pagination Dots - Centered below carousel as in the reference */}
-      <div className="flex justify-center items-center w-full px-[20px] mt-10 z-[30]">
+      <div className="flex justify-center items-center w-full px-[20px] mt-10 z-30">
         <div className="flex gap-[10px] items-center">
           {ROBOT_SLIDES.map((_, index) => (
             <button
