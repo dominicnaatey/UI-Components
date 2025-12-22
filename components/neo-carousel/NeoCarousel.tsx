@@ -25,10 +25,15 @@ const NeoCarousel: React.FC = () => {
   }, []);
 
   const handleSlideChange = (index: number) => {
-    if (isAnimating || index < 0 || index >= ROBOT_SLIDES.length) return;
+    if (isAnimating) return;
     setIsAnimating(true);
     setActiveIndex(index);
     setTimeout(() => setIsAnimating(false), 500);
+  };
+
+  const getWrappedIndex = (index: number) => {
+    const len = ROBOT_SLIDES.length;
+    return ((index % len) + len) % len;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -136,67 +141,85 @@ const NeoCarousel: React.FC = () => {
         onTouchEnd={onTouchEnd}
         className={`relative w-full flex items-center justify-center carousel-container h-[450px] md:h-[720px] transition-all duration-300 ${getCursorClass()}`}
       >
-        {ROBOT_SLIDES.map((slide, index) => (
-          <div
-            key={slide.id}
-            className="absolute origin-center"
-            style={getSlideStyles(index)}
-            onClick={(e) => {
-              if (index !== activeIndex) {
-                e.stopPropagation();
-                handleSlideChange(index);
-              }
-            }}
-          >
-            <div className={`relative w-full h-full overflow-hidden rounded-[40px] md:rounded-[80px] shadow-2xl bg-white group transition-shadow duration-300 ${activeIndex === index ? 'shadow-black/10' : 'shadow-none'}`}>
-              {/* Image Label - Dark pill style matching the mobile reference */}
-              {activeIndex === index && (
-                <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-                  <div className="text-white whitespace-nowrap text-[13px] font-medium rounded-full bg-black/80 backdrop-blur-md px-6 py-3 animate-in fade-in zoom-in-95 duration-500">
-                    {slide.title}
+        {/* Render a window of slides around the active index to create infinite effect */}
+        {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+          const index = activeIndex + offset;
+          const wrappedIndex = getWrappedIndex(index);
+          const slide = ROBOT_SLIDES[wrappedIndex];
+          const isCenter = index === activeIndex;
+          
+          return (
+            <div
+              key={index}
+              className="absolute origin-center"
+              style={getSlideStyles(index)}
+              onClick={(e) => {
+                if (!isCenter) {
+                  e.stopPropagation();
+                  handleSlideChange(index);
+                }
+              }}
+            >
+              <div className={`relative w-full h-full overflow-hidden rounded-[40px] md:rounded-[80px] shadow-2xl bg-white group transition-shadow duration-300 ${isCenter ? 'shadow-black/10' : 'shadow-none'}`}>
+                {/* Image Label - Dark pill style matching the mobile reference */}
+                {isCenter && (
+                  <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+                    <div className="text-white whitespace-nowrap text-[13px] font-medium rounded-full bg-black/80 backdrop-blur-md px-6 py-3 animate-in fade-in zoom-in-95 duration-500">
+                      {slide.title}
+                    </div>
                   </div>
+                )}
+  
+                {/* Slide Image */}
+                <div className="relative w-full h-full">
+                  <Image
+                    src={slide.image}
+                    alt={slide.title}
+                    fill
+                    className={`object-cover transition-all duration-1000 object-top pointer-events-none ${isCenter ? 'scale-100 brightness-100' : 'scale-110 brightness-90'}`}
+                    priority={Math.abs(offset) <= 1}
+                    sizes="(max-width: 768px) 100vw, 720px"
+                  />
                 </div>
-              )}
-
-              {/* Slide Image */}
-              <div className="relative w-full h-full">
-                <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  fill
-                  className={`object-cover transition-all duration-1000 object-top pointer-events-none ${activeIndex === index ? 'scale-100 brightness-100' : 'scale-110 brightness-90'}`}
-                  priority={Math.abs(activeIndex - index) <= 1}
-                  sizes="(max-width: 768px) 100vw, 720px"
-                />
+                
+                {/* Desktop Detail Overlay */}
+                {!isMobile && isCenter && (
+                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-12 text-white pointer-events-none">
+                    <p className="text-xl font-light max-w-md drop-shadow-md">{slide.description}</p>
+                  </div>
+                )}
               </div>
-              
-              {/* Desktop Detail Overlay */}
-              {!isMobile && activeIndex === index && (
-                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-12 text-white pointer-events-none">
-                  <p className="text-xl font-light max-w-md drop-shadow-md">{slide.description}</p>
-                </div>
-              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Pagination Dots - Centered below carousel as in the reference */}
       <div className="flex justify-center items-center w-full px-[20px] mt-10 z-30">
         <div className="flex gap-[10px] items-center">
-          {ROBOT_SLIDES.map((_, index) => (
-            <button
-              key={index}
-              className={`w-[8px] h-[8px] transition-all rounded-full cursor-pointer ${
-                activeIndex === index ? 'bg-gray-800 scale-110' : 'bg-gray-300'
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSlideChange(index);
-              }}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+          {ROBOT_SLIDES.map((_, i) => {
+             const isActive = getWrappedIndex(activeIndex) === i;
+             return (
+              <button
+                key={i}
+                className={`w-[8px] h-[8px] transition-all rounded-full cursor-pointer ${
+                  isActive ? 'bg-gray-800 scale-110' : 'bg-gray-300'
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Calculate shortest distance to the target index
+                  const currentWrapped = getWrappedIndex(activeIndex);
+                  let diff = i - currentWrapped;
+                  // Optimize direction (e.g. from 0 to 4 should go -1, not +4)
+                  if (diff > ROBOT_SLIDES.length / 2) diff -= ROBOT_SLIDES.length;
+                  if (diff < -ROBOT_SLIDES.length / 2) diff += ROBOT_SLIDES.length;
+                  
+                  handleSlideChange(activeIndex + diff);
+                }}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
