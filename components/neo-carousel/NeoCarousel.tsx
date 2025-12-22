@@ -63,15 +63,31 @@ const NeoCarousel: React.FC = () => {
 
   const isMobile = windowWidth < 768;
   const slideWidth = isMobile ? windowWidth * 0.88 : 720;
-  const slideSpacing = isMobile ? windowWidth * 0.92 : 640;
+  const slideSpacing = isMobile ? windowWidth * 0.92 : 628;
 
   const getSlideStyles = (index: number) => {
     const offset = index - activeIndex;
     const absOffset = Math.abs(offset);
     
-    const translateX = offset * slideSpacing; 
+    let translateX = 0;
+    if (isMobile) {
+      translateX = offset * slideSpacing;
+    } else {
+      // Non-linear spacing for desktop:
+      // First neighbor is at regular spacing (628px)
+      // Subsequent neighbors are packed closer (500px step) to be visible on edges
+      if (absOffset <= 1) {
+        translateX = offset * slideSpacing;
+      } else {
+        const direction = Math.sign(offset);
+        const extraOffset = absOffset - 1;
+        // 628 (base) + extra steps * 500 (tighter packing)
+        translateX = direction * (slideSpacing + extraOffset * 500);
+      }
+    }
+
     const scale = offset === 0 ? 1 : 0.66;
-    const opacity = absOffset > 1 ? 0.3 : 1; // Keep side slides slightly visible
+    const opacity = 1; // Always keep slides visible so they show up on edges
     const zIndex = 10 - absOffset;
 
     return {
