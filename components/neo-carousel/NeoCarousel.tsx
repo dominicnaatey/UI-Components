@@ -67,7 +67,7 @@ const NeoCarousel: React.FC = () => {
   };
 
   const isMobile = windowWidth < 768;
-  const slideWidth = isMobile ? windowWidth * 0.88 : 720;
+  const slideWidth = isMobile ? windowWidth * 0.85 : 720;
   const slideSpacing = isMobile ? windowWidth * 0.92 : 628;
 
   const getSlideStyles = (index: number) => {
@@ -100,8 +100,8 @@ const NeoCarousel: React.FC = () => {
       opacity,
       zIndex,
       width: `${slideWidth}px`,
-      height: isMobile ? '70vh' : '720px',
-      maxHeight: isMobile ? '500px' : '720px',
+      height: isMobile ? '60vh' : '720px',
+      maxHeight: isMobile ? '470px' : '720px',
       transition: 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease',
     };
   };
