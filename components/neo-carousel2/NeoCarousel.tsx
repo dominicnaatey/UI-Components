@@ -42,7 +42,7 @@ const NeoCarousel2: React.FC = () => {
     const centerX = rect.left + rect.width / 2;
     
     // Check if we are hovering the active slide (approx center)
-    const isCenter = Math.abs(e.clientX - centerX) < (isMobile ? 120 : 200);
+    const isCenter = Math.abs(e.clientX - centerX) < (isMobile ? 10 : 0);
     
     if (isCenter) {
       setCursorType(null);
@@ -113,8 +113,8 @@ const NeoCarousel2: React.FC = () => {
 
   const getCursorClass = () => {
     if (isMobile) return '';
-    if (cursorType === 'left') return 'cursor-w-resize';
-    if (cursorType === 'right') return 'cursor-e-resize';
+    if (cursorType === 'left') return 'cursor-[url(https://api.iconify.design/lucide:chevron-left.svg?height=48&color=%23000000),_pointer]';
+    if (cursorType === 'right') return 'cursor-[url(https://api.iconify.design/lucide:chevron-right.svg?height=48&color=%23000000),_pointer]';
     return 'cursor-default';
   };
 
