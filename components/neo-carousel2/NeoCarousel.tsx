@@ -2,12 +2,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ROBOT_SLIDES } from './constants';
 
 const NeoCarousel2: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isAnimating, setIsAnimating] = useState(false);
   const [cursorType, setCursorType] = useState<'left' | 'right' | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   // Default to 1200 to avoid hydration mismatch, update on mount
   const [windowWidth, setWindowWidth] = useState(1200);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,8 +43,10 @@ const NeoCarousel2: React.FC = () => {
     const rect = containerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     
+    setMousePos({ x: e.clientX, y: e.clientY });
+    
     // Check if we are hovering the active slide (approx center)
-    const isCenter = Math.abs(e.clientX - centerX) < (isMobile ? 10 : 0);
+    const isCenter = Math.abs(e.clientX - centerX) < (isMobile ? 120 : 325);
     
     if (isCenter) {
       setCursorType(null);
@@ -67,10 +71,10 @@ const NeoCarousel2: React.FC = () => {
   };
 
   const isMobile = windowWidth < 768;
-  const slideWidth = isMobile ? windowWidth * 0.85 : 680;
+  const slideWidth = isMobile ? windowWidth * 0.85 : 650;
   // Calculate spacing with a gap
   const GAP = 20;
-  const slideSpacing = isMobile ? slideWidth + 10 : 680 + GAP;
+  const slideSpacing = isMobile ? slideWidth + 10 : 650 + GAP;
 
   const getSlideStyles = (index: number) => {
     const offset = index - activeIndex;
@@ -113,8 +117,7 @@ const NeoCarousel2: React.FC = () => {
 
   const getCursorClass = () => {
     if (isMobile) return '';
-    if (cursorType === 'left') return 'cursor-[url(https://api.iconify.design/lucide:chevron-left.svg?height=48&color=%23000000),_pointer]';
-    if (cursorType === 'right') return 'cursor-[url(https://api.iconify.design/lucide:chevron-right.svg?height=48&color=%23000000),_pointer]';
+    if (cursorType === 'left' || cursorType === 'right') return 'cursor-none';
     return 'cursor-default';
   };
 
@@ -208,6 +211,21 @@ const NeoCarousel2: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Custom Cursor */}
+      {!isMobile && (cursorType === 'left' || cursorType === 'right') && (
+        <div 
+          className="fixed pointer-events-none z-50 text-black drop-shadow-md"
+          style={{ 
+            left: mousePos.x, 
+            top: mousePos.y,
+            transform: 'translate(-50%, -50%)' 
+          }}
+        >
+          {cursorType === 'left' && <ChevronLeft size={48} strokeWidth={1.5} />}
+          {cursorType === 'right' && <ChevronRight size={48} strokeWidth={1.5} />}
+        </div>
+      )}
     </div>
   );
 };
