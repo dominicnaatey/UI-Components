@@ -184,11 +184,11 @@ const NeoCarousel: React.FC = () => {
                 </div>
                 
                 {/* Desktop Detail Overlay */}
-                {!isMobile && isCenter && (
+                {/* {!isMobile && isCenter && (
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-12 text-white pointer-events-none">
                     <p className="text-xl font-light max-w-md drop-shadow-md">{slide.description}</p>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           );
