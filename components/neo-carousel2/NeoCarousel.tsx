@@ -67,32 +67,17 @@ const NeoCarousel2: React.FC = () => {
   };
 
   const isMobile = windowWidth < 768;
-  const slideWidth = isMobile ? windowWidth * 0.85 : 720;
-  // Calculate spacing to create a 5px gap between the edge of the active slide and the neighbor.
-  // Formula: slideWidth * 0.83 + 5
-  // This ensures that (CenterNeighbor - CenterActive) - (HalfWidthActive + HalfWidthNeighbor) = 5px
-  const slideSpacing = isMobile ? slideWidth * 0.83 + 10 : 628;
+  const slideWidth = isMobile ? windowWidth * 0.85 : 680;
+  // Calculate spacing with a gap
+  const GAP = 20;
+  const slideSpacing = isMobile ? slideWidth + 10 : 680 + GAP;
 
   const getSlideStyles = (index: number) => {
     const offset = index - activeIndex;
     const absOffset = Math.abs(offset);
     
-    let translateX = 0;
-    if (isMobile) {
-      translateX = offset * slideSpacing;
-    } else {
-      // Non-linear spacing for desktop:
-      // First neighbor is at regular spacing (628px)
-      // Subsequent neighbors are packed closer (500px step) to be visible on edges
-      if (absOffset <= 1) {
-        translateX = offset * slideSpacing;
-      } else {
-        const direction = Math.sign(offset);
-        const extraOffset = absOffset - 1;
-        // 628 (base) + extra steps * 500 (tighter packing)
-        translateX = direction * (slideSpacing + extraOffset * 500);
-      }
-    }
+    // Linear spacing to ensure consistent gaps
+    const translateX = offset * slideSpacing;
 
     const scale = 1;
     const opacity = 1; // Always keep slides visible so they show up on edges
@@ -103,8 +88,8 @@ const NeoCarousel2: React.FC = () => {
       opacity,
       zIndex,
       width: `${slideWidth}px`,
-      height: isMobile ? '60vh' : '720px',
-      maxHeight: isMobile ? '470px' : '720px',
+      height: isMobile ? '60vh' : '650px',
+      maxHeight: isMobile ? '470px' : '650px',
       transition: 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease',
     };
   };
