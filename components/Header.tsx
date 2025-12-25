@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Header: React.FC = () => {
   return (
@@ -13,14 +14,14 @@ const Header: React.FC = () => {
       
       {/* Navigation Links */}
       <div className="hidden md:flex space-x-12 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">
-        <a href="#" className="hover:text-black transition-colors duration-300 relative group">
-          Manifesto
+        <Link href="/" className="hover:text-black transition-colors duration-300 relative group">
+          Carousel
           <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full"></span>
-        </a>
-        <a href="#" className="hover:text-black transition-colors duration-300 relative group">
-          Technology
+        </Link>
+        <Link href="/carousel-2" className="hover:text-black transition-colors duration-300 relative group">
+          carousel2
           <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full"></span>
-        </a>
+        </Link>
         <a href="#" className="hover:text-black transition-colors duration-300 relative group">
           Order
           <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full"></span>
