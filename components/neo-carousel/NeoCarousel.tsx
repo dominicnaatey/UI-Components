@@ -68,7 +68,10 @@ const NeoCarousel: React.FC = () => {
 
   const isMobile = windowWidth < 768;
   const slideWidth = isMobile ? windowWidth * 0.85 : 720;
-  const slideSpacing = isMobile ? windowWidth * 0.92 : 628;
+  // Calculate spacing to create a 5px gap between the edge of the active slide and the neighbor.
+  // Formula: slideWidth * 0.83 + 5
+  // This ensures that (CenterNeighbor - CenterActive) - (HalfWidthActive + HalfWidthNeighbor) = 5px
+  const slideSpacing = isMobile ? slideWidth * 0.83 + 10 : 628;
 
   const getSlideStyles = (index: number) => {
     const offset = index - activeIndex;
