@@ -165,13 +165,11 @@ const NeoCarousel: React.FC = () => {
             >
               <div className={`relative w-full h-full overflow-hidden rounded-[40px] md:rounded-[80px] shadow-2xl bg-white group transition-shadow duration-300 ${isCenter ? 'shadow-black/10' : 'shadow-none'}`}>
                 {/* Image Label - Dark pill style matching the mobile reference */}
-                {isCenter && (
-                  <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-                    <div className="text-white whitespace-nowrap text-[13px] font-medium rounded-full bg-black/80 backdrop-blur-md px-6 py-3 animate-in fade-in zoom-in-95 duration-500">
-                      {slide.title}
-                    </div>
+                <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+                  <div className="text-white whitespace-nowrap text-[13px] font-medium rounded-full bg-black/80 backdrop-blur-md px-6 py-3 animate-in fade-in zoom-in-95 duration-500">
+                    {slide.title}
                   </div>
-                )}
+                </div>
   
                 {/* Slide Image */}
                 <div className="relative w-full h-full">
