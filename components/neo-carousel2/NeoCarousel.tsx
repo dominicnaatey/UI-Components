@@ -94,7 +94,7 @@ const NeoCarousel2: React.FC = () => {
       }
     }
 
-    const scale = offset === 0 ? 1 : 0.66;
+    const scale = 1;
     const opacity = 1; // Always keep slides visible so they show up on edges
     const zIndex = 10 - absOffset;
 
