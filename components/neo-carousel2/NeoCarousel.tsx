@@ -46,7 +46,7 @@ const NeoCarousel2: React.FC = () => {
     setMousePos({ x: e.clientX, y: e.clientY });
     
     // Check if we are hovering the active slide (approx center)
-    const isCenter = Math.abs(e.clientX - centerX) < (isMobile ? 120 : 325);
+    const isCenter = Math.abs(e.clientX - centerX) < (isMobile ? 10 : 0);
     
     if (isCenter) {
       setCursorType(null);
